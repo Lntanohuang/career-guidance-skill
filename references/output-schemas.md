@@ -1,11 +1,19 @@
 # 就业指导输出结构
 
-以下是用户可见的展示结构；依据不在这里展示，按用户问题选取必要部分即可。开发侧依据写入 report-meta 的 `evidence` 字段。
+以下是用户可见的展示结构；依据、缺口和风险不在这里展示，按用户问题选取必要部分即可。开发侧依据写入 report-meta 的 `evidence`、`gaps`、`risks` 字段。
 
 ## 岗位匹配表
 
 | 岗位要求 | 类型（必须/优先/可培养） | 对应经历或材料 | 状态（已具备/部分具备/待补强/信息不足） | 下一步验证 |
 | --- | --- | --- | --- | --- |
+
+## 岗位需求分析
+
+具体城市和岗位必须来自岗位库查询，用户正文至少说明筛选口径、样本范围、学历/经验/薪资结构和对投递决策的影响；查询不足时不写无来源比例。
+
+## 简历修改建议
+
+至少包含一处“原文 → 建议改写”，并列出改写依赖的事实和仍需补齐的证据。项目指标、技术栈和职责只能来自用户材料。
 
 ## 行动计划
 
@@ -38,6 +46,58 @@
 ```
 
 `status` 使用 `matched`、`partial`、`gap` 或 `unknown`。
+
+正式报告侧车可选记录岗位分析与简历审阅摘要：
+
+```json
+{
+  "marketAnalysis": {
+    "status": "complete",
+    "queryId": "Q_GZ_JAVA_INTERNSHIP_20260924",
+    "filters": { "city": "广州市", "keywords": ["Java", "后端"], "internship": true },
+    "sampleSize": 0,
+    "snapshotDate": "2026-09-24",
+    "metricIds": ["M1"],
+    "chartIds": ["CH1"],
+    "gaps": []
+  },
+  "resumeReview": {
+    "sourceIds": ["DS_RESUME_1"],
+    "strengths": ["…"],
+    "missingEvidence": ["…"],
+    "rewriteItems": ["…"]
+  }
+}
+```
+
+岗位库查询失败、样本不足或用户材料缺失时，使用开发侧字段记录原因，不在正文增加“缺口与风险”章节：
+
+```json
+{
+  "gaps": [
+    {
+      "id": "G1",
+      "type": "data",
+      "title": "广州 Java 后端实习学历结构",
+      "description": "需要查询岗位库后计算本科及以上占比",
+      "impact": "影响投递范围建议",
+      "status": "pending_query",
+      "verification": "按城市、岗位名和在招条件执行串行聚合"
+    }
+  ],
+  "risks": [
+    {
+      "id": "R1",
+      "title": "学历门槛判断待查询确认",
+      "severity": "medium",
+      "basis": "当前没有有效岗位库结果",
+      "mitigation": "查询完成后按真实比例调整投递策略"
+    }
+  ]
+}
+```
+
+具体城市、岗位、实习/应届或学历门槛问题必须调用 MySQL 只读岗位库；查询结果必须作为 `sources`、`metrics` 和 `charts` 的来源。查询失败时不生成比例图表。
 
 ## 图表规格（开发侧）
 

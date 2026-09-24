@@ -38,3 +38,30 @@
 ```
 
 `status` 使用 `matched`、`partial`、`gap` 或 `unknown`。
+
+## 图表规格（开发侧）
+
+需要图表时，报告侧车使用 `report-meta/2` 的可选 `charts` 字段。Agent 只生成数据描述，前端负责渲染：
+
+```json
+{
+  "charts": [
+    {
+      "id": "salary-distribution",
+      "type": "bar",
+      "title": "高职核心岗位薪资分布",
+      "data": [
+        { "label": "3–6K", "value": 32.6 },
+        { "label": "6–10K", "value": 40.3 }
+      ],
+      "unit": "%",
+      "sourceIds": ["DS_JOB_20260920"],
+      "snapshotDate": "2026-09-20",
+      "caveat": "仅代表岗位库内部结构，不代表全国岗位总量",
+      "altText": "6–10K 占比最高，为 40.3%"
+    }
+  ]
+}
+```
+
+允许的 `type` 为 `bar`、`stackedBar`、`histogram`、`line`、`map`。不要在 `charts` 中放 HTML、SVG、JavaScript 或图片数据；缺少来源、单位或统计口径时不生成图表。
